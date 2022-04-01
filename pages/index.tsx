@@ -1,9 +1,20 @@
+import { identify } from '@amplitude/analytics-core'
 import type { NextPage } from 'next'
 import Head from 'next/head'
 import Image from 'next/image'
+import { useEffect } from 'react'
 import styles from '../styles/Home.module.css'
+import * as amplitude from './amplitude';
 
 const Home: NextPage = () => {
+  useEffect(() => {
+    amplitude.track('Home Page Mounted');
+
+    return () => {
+      amplitude.track('Home Page Unmounted');
+    }
+  }, []);
+
   return (
     <div className={styles.container}>
       <Head>
@@ -23,18 +34,18 @@ const Home: NextPage = () => {
         </p>
 
         <div className={styles.grid}>
-          <a href="https://nextjs.org/docs" className={styles.card}>
+          <a className={styles.card} onClick={() => amplitude.track('Documentation Link Clicked')}>
             <h2>Documentation &rarr;</h2>
             <p>Find in-depth information about Next.js features and API.</p>
           </a>
 
-          <a href="https://nextjs.org/learn" className={styles.card}>
+          <a className={styles.card} onClick={() => amplitude.track('Learn Link Clicked')}>
             <h2>Learn &rarr;</h2>
             <p>Learn about Next.js in an interactive course with quizzes!</p>
           </a>
 
           <a
-            href="https://github.com/vercel/next.js/tree/canary/examples"
+            onClick={() => amplitude.track('Examples Link Clicked')}
             className={styles.card}
           >
             <h2>Examples &rarr;</h2>
@@ -42,7 +53,7 @@ const Home: NextPage = () => {
           </a>
 
           <a
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
+            onClick={() => amplitude.track('Deploy Link Clicked')}
             className={styles.card}
           >
             <h2>Deploy &rarr;</h2>
@@ -54,11 +65,10 @@ const Home: NextPage = () => {
       </main>
 
       <footer className={styles.footer}>
-        <a
-          href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
+        <a onClick={() => {
+          amplitude.identify(new amplitude.Identify().add('Logo Clicked', 1));
+          amplitude.revenue(new amplitude.Revenue().setRevenue(2));
+        }}>
           Powered by{' '}
           <span className={styles.logo}>
             <Image src="/vercel.svg" alt="Vercel Logo" width={72} height={16} />
